@@ -44,7 +44,7 @@
  * {
  */
 
-#define TID_CAN_CLK  20000000
+#define TID_CAN_CLK  40000000
 #define TID_SPI_FREQ 4000000
 //#define MY_REGMAP
 
@@ -52,18 +52,18 @@
 
 //int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val)
 
-#define tid_poll_timeout(op, spi, addr, val, cond, sleep_us, timeout_us, sleep_before_read) \
+#define tid_poll_timeout(op, map, addr, val, cond, sleep_us, timeout_us, sleep_before_read) \
 ({ \
 	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
 	might_sleep_if(sleep_us); \
 	if(sleep_before_read) \
 		usleep_range((sleep_us >> 2) + 1, sleep_us); \
 	for (;;) { \
-		(val) = op(spi, addr, &(val)); \
+		*(val) = op((map), (addr), (val)); \
 		if (cond) \
 			break; \
 		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-			(val) = op(spi, addr, &(val)); \
+			*(val) = op((map), (addr), (val)); \
 			break; \
 		} \
 		if (sleep_us) \
@@ -72,10 +72,10 @@
 	(cond) ? 0 : -ETIMEDOUT; \
 })
 
-#define my_regmap_read_poll_timeout(spi, addr, val, cond, sleep_us, timeout_us) \
+#define my_regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
 ({ \
 	int __ret, __tmp; \
-	__tmp = tid_poll_timeout(regmap_read, spi, addr, val, val || (cond), sleep_us, timeout_us, false); \
+	__tmp = tid_poll_timeout(regmap_read, (map), (addr), &(val), (val) || (cond), sleep_us, timeout_us, false); \
 	__ret ?: __tmp; \
 })
 
