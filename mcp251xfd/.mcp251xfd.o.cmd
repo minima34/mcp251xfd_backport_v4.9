@@ -1,1 +1,0 @@
-cmd_drivers/net/can/spi/mcp251xfd/mcp251xfd.o := /home/szbaijie/workspace/a133/longan2/out/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-ld -EL    -r -o drivers/net/can/spi/mcp251xfd/mcp251xfd.o drivers/net/can/spi/mcp251xfd/mcp251xfd-core.o drivers/net/can/spi/mcp251xfd/mcp251xfd-crc16.o drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.o 
