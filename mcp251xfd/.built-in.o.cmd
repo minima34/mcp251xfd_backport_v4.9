@@ -1,0 +1,1 @@
+cmd_drivers/net/can/spi/mcp251xfd/built-in.o :=  rm -f drivers/net/can/spi/mcp251xfd/built-in.o; /home/szbaijie/workspace/a133/longan2/out/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-ar rcsD drivers/net/can/spi/mcp251xfd/built-in.o
