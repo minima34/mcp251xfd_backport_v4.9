@@ -1097,6 +1097,68 @@ deps_drivers/net/can/spi/mcp251xfd/mcp251xfd-core.o := \
     $(wildcard include/config/aw/axp.h) \
   include/linux/spi/spi.h \
     $(wildcard include/config/spi.h) \
+  drivers/net/can/spi/mcp251xfd/sunxi-helper.c \
+  drivers/net/can/spi/mcp251xfd/../../../../spi/my-spi-sunxi.c \
+  include/linux/gpio.h \
+    $(wildcard include/config/arch/have/custom/gpio/h.h) \
+  include/asm-generic/gpio.h \
+    $(wildcard include/config/arch/nr/gpio.h) \
+  include/linux/gpio/driver.h \
+    $(wildcard include/config/gpio/generic.h) \
+    $(wildcard include/config/gpiolib/irqchip.h) \
+    $(wildcard include/config/of/gpio.h) \
+  include/linux/irq.h \
+    $(wildcard include/config/generic/irq/ipi.h) \
+    $(wildcard include/config/irq/domain/hierarchy.h) \
+    $(wildcard include/config/generic/pending/irq.h) \
+    $(wildcard include/config/hardirqs/sw/resend.h) \
+    $(wildcard include/config/generic/irq/legacy/alloc/hwirq.h) \
+    $(wildcard include/config/generic/irq/legacy.h) \
+  include/linux/irqhandler.h \
+  include/linux/io.h \
+  arch/arm64/include/generated/asm/irq_regs.h \
+  include/asm-generic/irq_regs.h \
+  include/linux/irqdesc.h \
+    $(wildcard include/config/irq/preflow/fasteoi.h) \
+    $(wildcard include/config/sparse/irq.h) \
+    $(wildcard include/config/handle/domain/irq.h) \
+  arch/arm64/include/generated/asm/hw_irq.h \
+  include/asm-generic/hw_irq.h \
+  include/linux/irqchip/chained_irq.h \
+  include/linux/irqdomain.h \
+    $(wildcard include/config/irq/domain.h) \
+  include/linux/pinctrl/pinctrl.h \
+    $(wildcard include/config/generic/pinconf.h) \
+  include/linux/spi/spi_bitbang.h \
+  arch/arm64/include/asm/cacheflush.h \
+  include/linux/dma/sunxi-dma.h \
+    $(wildcard include/config/arch/sun8iw10.h) \
+    $(wildcard include/config/arch/sun8iw11.h) \
+    $(wildcard include/config/arch/sun8iw17.h) \
+    $(wildcard include/config/arch/sun50iw3p1.h) \
+    $(wildcard include/config/arch/sun50iw6p1.h) \
+    $(wildcard include/config/arch/sun3iw1p1.h) \
+    $(wildcard include/config/arch/sun8iw7.h) \
+    $(wildcard include/config/arch/sun8iw12.h) \
+    $(wildcard include/config/arch/sun8iw15.h) \
+    $(wildcard include/config/arch/sun50iw8.h) \
+    $(wildcard include/config/arch/sun8iw18.h) \
+    $(wildcard include/config/arch/sun50iw5t.h) \
+    $(wildcard include/config/arch/sun50iw9.h) \
+    $(wildcard include/config/arch/sun50iw10.h) \
+    $(wildcard include/config/arch/sun8iw5.h) \
+    $(wildcard include/config/arch/sun8iw3.h) \
+    $(wildcard include/config/arch/sun8iw8.h) \
+    $(wildcard include/config/arch/sun8iw9.h) \
+    $(wildcard include/config/arch/sun9i.h) \
+    $(wildcard include/config/arch/sun8iw1.h) \
+    $(wildcard include/config/arch/sun8iw6.h) \
+    $(wildcard include/config/arch/sun50i.h) \
+  include/linux/dma/sunxi/dma-sun50iw10.h \
+  include/linux/clk/sunxi.h \
+  drivers/net/can/spi/mcp251xfd/../../../../spi/spi-sunxi.h \
+    $(wildcard include/config/arch/sun9iw1p1.h) \
+  drivers/net/can/spi/mcp251xfd/../../../../spi/spi-slave-protocol.h \
 
 drivers/net/can/spi/mcp251xfd/mcp251xfd-core.o: $(deps_drivers/net/can/spi/mcp251xfd/mcp251xfd-core.o)
 

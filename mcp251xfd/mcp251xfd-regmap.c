@@ -12,12 +12,21 @@
 
 static const struct regmap_config mcp251xfd_regmap_crc;
 
+
+//#include "sunxi-helper.c"
+
+
 static int
 mcp251xfd_regmap_nocrc_write(void *context, const void *data, size_t count)
 {
+	int ret;
 	struct spi_device *spi = context;
+	
+	//tid_cs_start(spi);
+	ret = spi_write(spi, data, count);
+	//tid_cs_stop(spi);
 
-	return spi_write(spi, data, count);
+	return ret;
 }
 
 static int
@@ -136,11 +145,12 @@ mcp251xfd_regmap_nocrc_update_bits(void *context, unsigned int reg,
 }
 
 static int
-mcp251xfd_regmap_nocrc_read(void *context,
-			    const void *reg, size_t reg_len,
+mcp251xfd_regmap_nocrc_read(void *context, const void *reg, size_t reg_len,
 			    void *val_buf, size_t val_len)
 {
 	struct spi_device *spi = context;
+	//tid_cs_start(spi);
+	
 	struct mcp251xfd_priv *priv = spi_get_drvdata(spi);
 	struct mcp251xfd_map_buf_nocrc *buf_rx = priv->map_buf_nocrc_rx;
 	struct mcp251xfd_map_buf_nocrc *buf_tx = priv->map_buf_nocrc_tx;
@@ -182,6 +192,7 @@ mcp251xfd_regmap_nocrc_read(void *context,
 	if (!(priv->devtype_data.quirks & MCP251XFD_QUIRK_HALF_DUPLEX))
 		memcpy(val_buf, buf_rx->data, val_len);
 
+	//tid_cs_stop(spi);
 	return 0;
 }
 
@@ -220,22 +231,21 @@ mcp251xfd_regmap_crc_gather_write(void *context,
 }
 
 static int
-mcp251xfd_regmap_crc_write(void *context,
-			   const void *data, size_t count)
+mcp251xfd_regmap_crc_write(void *context, const void *data, size_t count)
 {
 	const size_t data_offset = sizeof(__be16) +
 		mcp251xfd_regmap_crc.pad_bits / BITS_PER_BYTE;
 
-	return mcp251xfd_regmap_crc_gather_write(context,
-						 data, data_offset,
+	return mcp251xfd_regmap_crc_gather_write(context, data, data_offset,
 						 data + data_offset,
 						 count - data_offset);
 }
 
 static int
-mcp251xfd_regmap_crc_read_one(struct mcp251xfd_priv *priv,
-			      struct spi_message *msg, unsigned int data_len)
+mcp251xfd_regmap_crc_read_one(struct mcp251xfd_priv *priv, struct spi_message *msg, unsigned int data_len)
 {
+	//tid_cs_start(priv->spi);
+	
 	const struct mcp251xfd_map_buf_crc *buf_rx = priv->map_buf_crc_rx;
 	const struct mcp251xfd_map_buf_crc *buf_tx = priv->map_buf_crc_tx;
 	u16 crc_received, crc_calculated;
@@ -256,15 +266,17 @@ mcp251xfd_regmap_crc_read_one(struct mcp251xfd_priv *priv,
 	if (crc_received != crc_calculated)
 		return -EBADMSG;
 
+	//tid_cs_stop(priv->spi);
 	return 0;
 }
 
 static int
-mcp251xfd_regmap_crc_read(void *context,
-			  const void *reg_p, size_t reg_len,
+mcp251xfd_regmap_crc_read(void *context, const void *reg_p, size_t reg_len,
 			  void *val_buf, size_t val_len)
 {
 	struct spi_device *spi = context;
+	//tid_cs_start(spi);
+	
 	struct mcp251xfd_priv *priv = spi_get_drvdata(spi);
 	struct mcp251xfd_map_buf_crc *buf_rx = priv->map_buf_crc_rx;
 	struct mcp251xfd_map_buf_crc *buf_tx = priv->map_buf_crc_tx;
@@ -356,6 +368,7 @@ mcp251xfd_regmap_crc_read(void *context,
  out:
 	memcpy(val_buf, buf_rx->data, val_len);
 
+	//tid_cs_stop(spi);
 	return 0;
 }
 

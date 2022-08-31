@@ -50,7 +50,17 @@
 
 // marker2
 
-//int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val)
+#include "sunxi-helper.c"
+
+
+struct spi_device *this_spi = 0;
+
+#define op_wrapper(op, map, addr, val) \
+({ \
+	tid_cs_start((this_spi)); \
+	(val) = op((map), (addr), &(val)); \
+	tid_cs_stop((this_spi)); \
+})
 
 #define tid_poll_timeout(op, map, addr, val, cond, sleep_us, timeout_us, sleep_before_read) \
 ({ \
@@ -59,11 +69,11 @@
 	if(sleep_before_read) \
 		usleep_range((sleep_us >> 2) + 1, sleep_us); \
 	for (;;) { \
-		*(val) = op((map), (addr), (val)); \
+		op_wrapper((op), (map), (addr), (val)); \
 		if (cond) \
 			break; \
 		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-			*(val) = op((map), (addr), (val)); \
+			op_wrapper((op), (map), (addr), (val)); \
 			break; \
 		} \
 		if (sleep_us) \
@@ -75,7 +85,7 @@
 #define my_regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
 ({ \
 	int __ret, __tmp; \
-	__tmp = tid_poll_timeout(regmap_read, (map), (addr), &(val), (val) || (cond), sleep_us, timeout_us, false); \
+	__tmp = tid_poll_timeout(regmap_read, (map), (addr), (val), (val) || (cond), sleep_us, timeout_us, false); \
 	__ret ?: __tmp; \
 })
 
@@ -688,8 +698,11 @@ static int mcp251xfd_chip_clock_enable(const struct mcp251xfd_priv *priv)
 	 * other bits are unaffected.
 	 */
 	 
-	 
+	
+	tid_cs_start(priv->spi); 
 	err = regmap_write(priv->map_reg, MCP251XFD_REG_OSC, osc);
+	tid_cs_stop(priv->spi);
+	
 	netdev_err( priv->ndev, "%s(%d) w1 osc=0x%08x\n", __FUNCTION__, __LINE__, osc);
 
 	if (err)
@@ -701,6 +714,9 @@ static int mcp251xfd_chip_clock_enable(const struct mcp251xfd_priv *priv)
 	err = my_regmap_read_poll_timeout(priv->map_reg, MCP251XFD_REG_OSC, osc, (osc & osc_mask) == osc_reference,
 				       MCP251XFD_OSC_STAB_SLEEP_US,
 				       MCP251XFD_OSC_STAB_TIMEOUT_US);
+				       
+	//tid_cs_start(priv->spi);
+	//while(1);
 
 	netdev_err( priv->ndev, "%s(%d) r0 osc=0x%08x\n", __FUNCTION__, __LINE__, osc);
 
@@ -3106,6 +3122,8 @@ static int mcp251xfd_regmap_init(struct mcp251xfd_priv *priv)
 
 static int mcp251xfd_probe(struct spi_device *spi)
 {
+	this_spi = spi; //hahaha tiny hack
+	
 	const void *match;
 	struct net_device *ndev;
 	struct mcp251xfd_priv *priv;
